@@ -42,7 +42,7 @@ No, that's not a mistake.
 import bitarray
 import base64
 from set1.challenge2.solve import xor
-from set1.challenge3.solve import  english_letter_frequencies, score, brute_force_char
+from set1.challenge3.solve import brute_force_char
 from set1.challenge5.solve import calculate_xor_key
 
 

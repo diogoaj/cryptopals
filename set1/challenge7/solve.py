@@ -26,7 +26,7 @@ pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s)
 unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 
-def decrypt_aes_ecb(ciphertext, key, block_size):
+def decrypt_aes_ecb(ciphertext, key):
     aes = AES.new(key, AES.MODE_ECB)
     return unpad(aes.decrypt(ciphertext).decode())
 
