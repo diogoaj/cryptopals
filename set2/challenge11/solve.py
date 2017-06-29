@@ -33,7 +33,6 @@ def encryption_oracle(string):
     r_key = os.urandom(16)
     r = random.randint(0,1)
     string = random_char(random.randint(5,10)) + string + random_char(random.randint(5,10))
-    print(string)
 
     if r == 0:
         print("Ciphering with ECB mode...")
