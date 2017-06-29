@@ -1,4 +1,4 @@
-""" IAn ECB/CBC detection oracle - https://cryptopals.com/sets/2/challenges/11
+"""An ECB/CBC detection oracle - https://cryptopals.com/sets/2/challenges/11
 
 Now that you have ECB and CBC working:
 
@@ -50,5 +50,5 @@ def detection_oracle(cipher, block_size):
 
 
 if __name__ == "__main__":
-    cipher = encryption_oracle("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    cipher = encryption_oracle("A"*64)
     print("Oracle says, block mode is:", detection_oracle(cipher, 16))
