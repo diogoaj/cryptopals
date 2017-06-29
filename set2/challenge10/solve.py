@@ -24,8 +24,6 @@ Don't cheat.
 import base64
 from Crypto.Cipher import AES
 from set1.challenge6.solve import open_file
-from set1.challenge2.solve import xor
-
 
 def xor(string1, string2):
     result_string = []
@@ -55,9 +53,10 @@ def decrypt_aes_ecb(ciphertext, key):
     return aes.decrypt(ciphertext)
 
 
-def encrypt_aes_cbc(plaintext, key, block_size):
+def encrypt_aes_cbc(plaintext, key, block_size, IV=None):
     cipher = []
-    IV = (chr(0)*block_size).encode()
+    if IV == None:
+        IV = (chr(0)*block_size).encode()
 
     ciphertext = encrypt_aes_ecb(xor(IV, plaintext[0:block_size].encode()), key, block_size)
     cipher.append(ciphertext)
@@ -68,9 +67,10 @@ def encrypt_aes_cbc(plaintext, key, block_size):
 
     return b"".join(cipher)
 
-def decrypt_aes_cbc(ciphertext, key, block_size):
+def decrypt_aes_cbc(ciphertext, key, block_size, IV=None):
     decipher = []
-    IV = (chr(0) * block_size).encode()
+    if IV == None:
+        IV = (chr(0) * block_size).encode()
 
     plaintext = xor(decrypt_aes_ecb(ciphertext[0:block_size], key), IV)
     decipher.append(plaintext)
@@ -88,5 +88,5 @@ if __name__ == "__main__":
     key = "YELLOW SUBMARINE"
 
     plaintext = decrypt_aes_cbc(base64.b64decode(contents), key, 16)
-    print(unpad(plaintext))
+    print(unpad(plaintext).decode())
 
