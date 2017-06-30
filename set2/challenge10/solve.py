@@ -45,6 +45,7 @@ def unpad(s):
 def encrypt_aes_ecb(plaintext, key, block_size):
     aes = AES.new(key, AES.MODE_ECB)
     plaintext = pad(plaintext, block_size)
+
     return aes.encrypt(plaintext)
 
 
