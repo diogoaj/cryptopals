@@ -66,7 +66,7 @@ def profile_for(email):
     return encrypted_profile, decrypted_profile
 
 def gen_key(block_size):
-    return os.urandom(16)
+    return os.urandom(block_size)
 
 def encrypt_profile(plaintext, key):
     return encrypt_aes_ecb(plaintext.encode(), key, 16)
