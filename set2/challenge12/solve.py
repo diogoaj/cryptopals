@@ -1,4 +1,4 @@
-"""AByte-at-a-time ECB decryption (Simple) - https://cryptopals.com/sets/2/challenges/12
+"""Byte-at-a-time ECB decryption (Simple) - https://cryptopals.com/sets/2/challenges/12
 
 Copy your oracle function to a new function that encrypts buffers under ECB mode using a consistent but unknown key
 (for instance, assign a single random key, once, to a global variable).
