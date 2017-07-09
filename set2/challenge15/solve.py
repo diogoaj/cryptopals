@@ -15,6 +15,7 @@ If you are writing in a language with exceptions, like Python or Ruby, make your
 on bad padding.
 Crypto nerds know where we're going with this. Bear with us.
 """
+
 from string import printable
 
 def validate_padding(plaintext):
