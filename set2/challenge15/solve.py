@@ -12,9 +12,12 @@ on bad padding.
 Crypto nerds know where we're going with this. Bear with us.
 """
 
+from struct import pack
+
 def validate_PKCS7_padding(plaintext):
-    l = plaintext[-1]
-    l_value = int(l.encode('hex'), 16)
+    l_value = plaintext[-1]
+    l = pack("B",l_value)
+
     if l_value == 0 or plaintext[-l_value:] != l * l_value:
         raise ValueError("Incorrect padding")
     return plaintext[0:-l_value]
