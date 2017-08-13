@@ -103,17 +103,6 @@ class AESCipher:
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv )
         return cipher.decrypt(enc)
 
-
-def xor(b1, b2, single=False):
-    res = []
-    if single == False:
-        for i in range(len(b1)):
-            res.append(b1[i] ^ b2[i])
-    else:
-        return b1 ^ b2
-
-    return array.array('B', res).tostring()
-
 # Deciphering all blocks including the first one,
 # with the assumption that the IV is 0.
 if __name__ == "__main__":
@@ -149,10 +138,10 @@ if __name__ == "__main__":
 
                 if decrypt(cipher_) == True:
 
-                    char = xor(i, c1, True)
+                    char = i ^ c1
                     intermidiate_blocks = [char] + intermidiate_blocks
 
-                    ch = xor(last2[BLOCK_SIZE-j-1], char, True)
+                    ch = last2[BLOCK_SIZE-j-1] ^ char
                     #print("Found char ->", ch, chr(ch))
                     deciphered_block = chr(ch) + deciphered_block
                     break
@@ -160,15 +149,3 @@ if __name__ == "__main__":
                 c2 = [0] * (BLOCK_SIZE - 1 - j)
 
         print(deciphered_block.encode())
-
-
-
-
-
-
-
-
-
-
-
-
