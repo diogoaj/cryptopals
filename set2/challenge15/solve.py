@@ -22,10 +22,10 @@ def validate_PKCS7_padding(plaintext):
         raise ValueError("Incorrect padding")
     return plaintext[0:-l_value]
 
+if __name__ == "__main__":
+    # Returns stripped string
+    print(validate_PKCS7_padding(b'ICE ICE BABY\x04\x04\x04\x04'))
 
-# Returns stripped string
-print(validate_PKCS7_padding(b'ICE ICE BABY\x04\x04\x04\x04'))
-
-# These two calls raise the exception
-#print(validate_PKCS7_padding(b'ICE ICE BABY\x05\x05\x05\x05'))
-#print(validate_PKCS7_padding(b'ICE ICE BABY\x01\x02\x03\x04'))
+    # These two calls raise the exception
+    #print(validate_PKCS7_padding(b'ICE ICE BABY\x05\x05\x05\x05'))
+    #print(validate_PKCS7_padding(b'ICE ICE BABY\x01\x02\x03\x04'))

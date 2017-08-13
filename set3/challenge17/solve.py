@@ -53,15 +53,17 @@ You can mount a padding oracle on any CBC block, whether it's padded or not.
 
 import os
 import random
+import array
 import base64
-from set2.challenge10.solve import *
+from Crypto.Cipher import AES
 from set2.challenge15.solve import validate_PKCS7_padding
 
 BLOCK_SIZE = 16
 
-pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
+pad = lambda s: s + ((BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)).encode()
 
-strings = ["DAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=",
+
+strings = ["MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=",
            "MDAwMDAxV2l0aCB0aGUgYmFzcyBraWNrZWQgaW4gYW5kIHRoZSBWZWdhJ3MgYXJlIHB1bXBpbic=",
            "MDAwMDAyUXVpY2sgdG8gdGhlIHBvaW50LCB0byB0aGUgcG9pbnQsIG5vIGZha2luZw==",
            "MDAwMDAzQ29va2luZyBNQydzIGxpa2UgYSBwb3VuZCBvZiBiYWNvbg==",
@@ -72,13 +74,14 @@ strings = ["DAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=",
            "MDAwMDA4b2xsaW4nIGluIG15IGZpdmUgcG9pbnQgb2g=",
            "MDAwMDA5aXRoIG15IHJhZy10b3AgZG93biBzbyBteSBoYWlyIGNhbiBibG93"]
 
-def encrypt(key, IV=None):
-    plaintext = pad(strings[random.randint(0,9)])
-    return encrypt_aes_cbc(base64.b64decode(plaintext), key, BLOCK_SIZE, IV)
 
-def decrypt(ciphertext, key, IV=None):
-    plaintext = decrypt_aes_cbc(ciphertext, key, BLOCK_SIZE, IV)
-    print(plaintext)
+def encrypt(key):
+    plaintext = strings[random.randint(0,9)]
+    return aes.encrypt(base64.b64decode(plaintext))
+
+
+def decrypt(ciphertext):
+    plaintext = aes.decrypt(ciphertext)
     try:
         s = validate_PKCS7_padding(plaintext)
         return True
@@ -86,19 +89,77 @@ def decrypt(ciphertext, key, IV=None):
         return False
 
 
+class AESCipher:
+    def __init__(self, key):
+        self.key = key
+        self.iv = b'\x00'*16
+
+    def encrypt( self, raw ):
+        raw = pad(raw)
+        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
+        return cipher.encrypt(raw)
+
+    def decrypt( self, enc ):
+        cipher = AES.new(self.key, AES.MODE_CBC, self.iv )
+        return cipher.decrypt(enc)
+
+
+def xor(b1, b2, single=False):
+    res = []
+    if single == False:
+        for i in range(len(b1)):
+            res.append(b1[i] ^ b2[i])
+    else:
+        return b1 ^ b2
+
+    return array.array('B', res).tostring()
+
+# Deciphering all blocks including the first one,
+# with the assumption that the IV is 0.
 if __name__ == "__main__":
     aes_key = os.urandom(BLOCK_SIZE)
+    aes = AESCipher(aes_key)
 
     cipher = encrypt(aes_key)
+    decipher = aes.decrypt(cipher)
 
-    print(decrypt(cipher, aes_key))
+    cipher_blocks = [cipher[i:i+16] for i in range(0, len(cipher), 16)]
+    cipher_blocks = [b'\x00'*16] + cipher_blocks # IV
 
+    deciphered_block = ""
+    for index in range(len(cipher_blocks)-1, 0, -1):
+        last = cipher_blocks[index]
+        last2 = cipher_blocks[index - 1]
 
+        intermidiate_blocks = []
 
+        for j in range(BLOCK_SIZE):
+            c1 = j+1
+            c2 = [0] * (BLOCK_SIZE - 1 - j)
 
+            # Brute force chars
+            for i in range(256):
+                c2.append(i)
 
+                for k in range(j):
+                    c_ = c1 ^ intermidiate_blocks[k]
+                    c2.append(c_)
 
+                cipher_ = bytes(c2) + last
 
+                if decrypt(cipher_) == True:
+
+                    char = xor(i, c1, True)
+                    intermidiate_blocks = [char] + intermidiate_blocks
+
+                    ch = xor(last2[BLOCK_SIZE-j-1], char, True)
+                    #print("Found char ->", ch, chr(ch))
+                    deciphered_block = chr(ch) + deciphered_block
+                    break
+
+                c2 = [0] * (BLOCK_SIZE - 1 - j)
+
+        print(deciphered_block.encode())
 
 
 
