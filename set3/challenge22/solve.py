@@ -24,6 +24,3 @@ while True:
 		print ("Found seed: " + str(t))
 		break
 	t -= 1
-
-print("Checking output...")
-print(output == MarsenneTwisterMT19937(t).generateNumber())
