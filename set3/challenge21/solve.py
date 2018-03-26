@@ -39,6 +39,9 @@ class MarsenneTwisterMT19937:
 		for i in range(1, self.n):
 			self.x[i] = (self.f * (self.x[i-1] ^ (self.x[i-1] >> (self.w-2))) + i) & self.d
 
+	def setState(self, x):
+		self.x = x
+
 	def twist(self):
 		for i in range(self.n):
 			y = (self.x[i] & upper_bits) + (self.x[(i+1) % self.n] & lower_bits)
@@ -53,6 +56,6 @@ class MarsenneTwisterMT19937:
 		y = self.x[self.index] ^ ((self.x[self.index] >> self.u) & self.d)
 		y = y ^ ((y << self.s) & self.b)
 		y = y ^ ((y << self.t) & self.c)
-		z = (y ^ (y >> self.l))  & self.d
+		z = (y ^ (y >> self.l)) & self.d
 		self.index = (self.index + 1) % self.n
 		return z
