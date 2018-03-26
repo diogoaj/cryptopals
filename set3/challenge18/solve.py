@@ -42,9 +42,16 @@ This is the only block cipher mode that matters in good code.
 
 import base64
 from Crypto.Cipher import AES
-from set1.challenge2.solve import xor
 
 BLOCK_SIZE = 16
+
+def xor(string1, string2):
+    result_string = ""
+
+    for i in range(len(string1)):
+        result_string += chr(string1[i] ^ string2[i])
+
+    return result_string
 
 def encrypt_aes_ecb(plaintext, key, block_size):
     aes = AES.new(key, AES.MODE_ECB)
