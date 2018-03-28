@@ -55,28 +55,26 @@ def xor(string1, string2):
 
 def encrypt_aes_ecb(plaintext, key, block_size):
     aes = AES.new(key, AES.MODE_ECB)
+
     return aes.encrypt(plaintext)
 
-def aes_ctr(ciphertext, key, counter, block_size):
+def aes_ctr(ciphertext, key, nonce, block_size):
+    counter = b'\x00'*8
     blocks = [ciphertext[i:i+16] for i in range(0, len(ciphertext), 16)]
     decrypted_blocks = []
-    c = 0
 
     for block in blocks:
-        keystream = encrypt_aes_ecb(counter, key, BLOCK_SIZE)
+        keystream = encrypt_aes_ecb(nonce + counter, key, BLOCK_SIZE)
         decrypted_blocks.append(xor(block, keystream))
-        c += 1
-        counter =  counter[0:8] + bytes([c]) + b'\x00'*7
+        counter = (int.from_bytes(counter, byteorder='little') + 1).to_bytes(block_size // 2, byteorder='little')
 
-    return decrypted_blocks
+    return ''.join(decrypted_blocks)
 
 if __name__ == "__main__":
     string = "L77na/nrFsKvynd6HzOoG7GHTLXsTVu9qvY/2syLXzhPweyyMTJULu/6/kXX0KSvoOLSFQ=="
     key = b'YELLOW SUBMARINE'
     nonce = b'\x00'*8
-    counter = b'\x00'*8
 
-    c = nonce + counter
     cipher = base64.b64decode(string)
 
-    print (''.join(aes_ctr(cipher, key, c, BLOCK_SIZE)))
+    print (aes_ctr(cipher, key, nonce, BLOCK_SIZE))

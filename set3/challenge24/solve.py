@@ -89,4 +89,4 @@ print(recoverKey(ciphertext))"""
 """ Password reset token funcs
 token = generateToken()
 
-print(detectToken(token))
+print(detectToken(token))"""
