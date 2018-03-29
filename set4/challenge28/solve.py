@@ -126,20 +126,17 @@ class SHA1:
         return s
 
 
-def generateMAC(message, key):
+def computeMAC(key, message):
 	h.update(key + message)
 	return h.hexdigest()
 
 
-def authenticateMessage(mac, message):
-	h.update(message)
-	return h.hexdigest() == mac
-	
-
 if __name__ == '__main__':
-	key = os.urandom(16)
+    key = os.urandom(16)
+    h = SHA1()
+    mac = computeMAC(key, b'test')
+    
+    # Basic test
+    test = computeMAC(key, b'Test')
+    print(test == mac)
 
-	h = SHA1()
-	mac = generateMAC(b'test', key)
-
-	print(authenticateMessage(mac, b'test'))
